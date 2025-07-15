@@ -2,12 +2,31 @@ import { shell, BrowserWindow, app, ipcMain } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
-import Store from 'electron-store';
+import Store from 'electron-store'
+import path from 'path'
 
 const store = new Store();
 
-function createWindow(): void {
-  // Create the browser window.
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient('gitWidget', process.execPath, [path.resolve(process.argv[1])]);
+  }
+} else {
+  app.setAsDefaultProtocolClient('gitWidget')
+}
+
+let deepLinkUrl: string | null = null;
+
+if (process.platform === 'win32') {
+  const deeplink = process.argv.find(arg => arg.startsWith('gitWidget://'))
+  if (deeplink) {
+    deepLinkUrl = deeplink
+  }
+}
+
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function createWindow(): any {
   const mainWindow = new BrowserWindow({
     width: 900,
     height: 670,
@@ -44,10 +63,34 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  return mainWindow
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  const mainWindow = createWindow();
+
+  if (deepLinkUrl) {
+    const url = new URL(deepLinkUrl);
+    const code = url.searchParams.get('code');
+
+    if (code) {
+      console.log('🔑 GitHub OAuth Code received:', code);
+
+      // Call your backend or exchange function here
+      // Then send it to renderer:
+      mainWindow.webContents.on('did-finish-load', () => {
+        mainWindow.webContents.send('auth-success', code); // or token later
+      });
+    }
+  }
+});
+
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit()
+  }
 })
 
 ipcMain.handle('get-token', () => {
@@ -58,10 +101,4 @@ ipcMain.handle('get-token', () => {
 ipcMain.handle('set-token', (_event, token: string) => {
   console.log('[main] set-token called');
   store.set('access_token', token)
-})
-
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
 })

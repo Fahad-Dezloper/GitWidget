@@ -5,8 +5,8 @@ function App(): React.JSX.Element {
   const [token, setToken] = useState<string | null>(null)
   const onGitHubSignIn = (): void => {
     // @ts-ignore (define in dts)
-    window.electron.openExternal('http://localhost:3000/auth');
-  };
+    window.electron.openGitHubAuth()
+  }
 
   useEffect(() => {
     // @ts-ignore (define in dts)
@@ -15,7 +15,6 @@ function App(): React.JSX.Element {
       // @ts-ignore (define in dts)
         .invoke('get-token')
         .then((storedToken) => {
-          console.log('✅ Token:', storedToken)
           setToken(storedToken || null)
         })
         .catch((err) => {
@@ -24,20 +23,19 @@ function App(): React.JSX.Element {
     } else {
       console.warn('⚠️ window.electron.invoke is undefined');
     }
-  }, []);
+  }, [])
 
-  const onSignOut = (): void => {
-    // @ts-ignore (define in dts)
-    window.electron.invoke('set-token', null);
-    setToken(null)
-  }
+  // const onSignOut = (): void => {
+  //   // @ts-ignore (define in dts)
+  //   window.electron.invoke('set-token', null);
+  //   setToken(null)
+  // }
 
-  const onSetToken = (token: string): void => {
-    console.log('onSetToken', token)
-    // @ts-ignore (define in dts)
-    window.electron.invoke('set-token', token);
-    setToken(token)
-  }
+  // const onSetToken = (token: string): void => {
+  //   // @ts-ignore (define in dts)
+  //   window.electron.invoke('set-token', token);
+  //   setToken(token)
+  // }
 
   return (
     <>
@@ -47,26 +45,9 @@ function App(): React.JSX.Element {
             Documentation
           </a>
         </div>
-        {token ? (
           <div className="action">
-            <a target="_blank" rel="noreferrer" onClick={onSignOut}>
-              Sign Out
-            </a>
-          </div>
-        ) : (
-          <>
-          <div className="action">
-            <a target="_blank" rel="noreferrer" onClick={onGitHubSignIn}>
-              Sign In with Github
-            </a>
-          </div>
-          <div className="action">
-            <a target="_blank" rel="noreferrer" onClick={() => onSetToken('1234567890')}>
-              Set token
-            </a>
-          </div>
-          </>
-        )}
+              <button onClick={() => onGitHubSignIn()}>Sign in with GitHub</button>
+            </div>
       </div>
       <Versions></Versions>
     </>
