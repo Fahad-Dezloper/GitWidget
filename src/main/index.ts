@@ -1,4 +1,4 @@
-import { shell, BrowserWindow, app, ipcMain } from 'electron'
+import { shell, BrowserWindow, app, ipcMain, screen } from 'electron'
 import { join } from 'path'
 import { is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -86,15 +86,24 @@ if (!gotTheLock) {
 }
 
 function createWindow(): BrowserWindow {
+  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 670,
+    width: 350,
+    height: 130,
     show: false,
+    maxWidth: 820,
+    maxHeight: 130,
+    backgroundColor: '#000000',
     autoHideMenuBar: true,
+    frame: false,
+    alwaysOnTop: true,
+    transparent: false,
+    resizable: true,
+    skipTaskbar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: false
+      // sandbox: true
     }
   })
 
@@ -123,6 +132,7 @@ function createWindow(): BrowserWindow {
   // Load the remote URL for development or the local html file for production.
   if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    // mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }

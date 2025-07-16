@@ -1,13 +1,69 @@
 @import './base.css';
 
-body {
+/* Add widget container styles */
+.widget-container {
+  width: 100%;
+  height: 100%;
+  background: #000;
+  border-radius: 18px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.25);
+  overflow: hidden;
+  padding: 0;
+  margin: 0;
+  position: relative;
+  border: 1.5px solid #23272f;
+}
+
+.widget-header {
+  width: 100%;
+  height: 32px;
+  background: rgba(32, 34, 40, 0.95);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background-image: url('./wavy-lines.svg');
-  background-size: cover;
+  justify-content: space-between;
+  padding: 0 14px;
+  -webkit-app-region: drag;
   user-select: none;
+  border-bottom: 1px solid #23272f;
+}
+
+.widget-header button {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  padding: 0 6px;
+}
+
+body {
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  overflow: hidden;
+  background: transparent;
+  user-select: none;
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
 }
 
 code {
@@ -24,14 +80,6 @@ code {
     Liberation Mono,
     monospace;
   font-size: 85%;
-}
-
-#root {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  margin-bottom: 80px;
 }
 
 .logo {
@@ -168,4 +216,64 @@ code {
   .actions {
     display: none;
   }
+}
+
+
+
+#grid {
+  display: grid;
+  grid-template-columns: repeat(18, 12px);
+  grid-template-rows: repeat(7, 12px);
+  gap: 3px;
+  max-width: 100%;
+  max-height: 100%;
+  box-sizing: border-box;
+  grid-auto-flow: column; /* Fill column by column */
+  -webkit-app-region: no-drag; /* Make the grid background draggable */
+}
+
+.box {
+  max-width: 13px;
+  max-height: 13px;
+  border-radius: 3px;
+  background-color: #161b22;
+  border: none;
+  box-sizing: border-box;
+  min-width: 12px;
+  min-height: 12px;
+  -webkit-app-region: no-drag; /* Ensure tooltips work on hover */
+}
+
+/* GitHub-style contribution colors */
+.box[data-level="0"] {
+  background-color: #161b22 !important;
+}
+
+.box[data-level="1"] {
+  background-color: #0e4429 !important;
+}
+
+.box[data-level="2"] {
+  background-color: #006d32 !important;
+}
+
+.box[data-level="3"] {
+  background-color: #26a641 !important;
+}
+
+.box[data-level="4"] {
+  background-color: #39d353 !important;
+}
+
+.language-bar {
+  background: #eee;
+  width: 40px;
+  border-radius: 10px;
+  height: 10px;
+  margin: 0 auto;
+}
+
+/* Hide browser scrollbars */
+::-webkit-scrollbar {
+  display: none;
 }
