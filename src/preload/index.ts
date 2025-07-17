@@ -5,10 +5,7 @@ contextBridge.exposeInMainWorld('electron', {
   openExternal: (url: string) => shell.openExternal(url),
 
   // Start GitHub OAuth
-  openGitHubAuth: () =>
-    shell.openExternal(
-      'https://github.com/login/oauth/authorize?client_id=Ov23liqbrmV9VGJ7Y5AQ&redirect_uri=gitWidget://auth&scope=read:user'
-    ),
+  openGitHubAuth: () => ipcRenderer.send('open-github-auth'),
 
   // IPC invoke (promise-based)
   invoke: (channel: string, ...args: unknown[]) => ipcRenderer.invoke(channel, ...args),

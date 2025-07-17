@@ -1,5 +1,34 @@
 import { useEffect, useState, type JSX } from 'react'
 import ContributionGrid from './ContributionGrid'
+import colorsData from '../../../../colors.json'
+import { LogoutIcon } from './LogoutComponent'
+import { SettingsGearIcon } from './SettingsIcon'
+
+const CACHE_KEY = 'github-stats-cache'
+const CACHE_DURATION = 5 * 60 * 60 * 1000 // 5 hours in milliseconds
+
+interface ContributionDay {
+  color: string
+  contributionCount: number
+  date: string
+}
+
+interface ContributionWeek {
+  contributionDays: ContributionDay[]
+  firstDay: string
+}
+
+interface CachedData {
+  timestamp: number
+  contribWeeks: ContributionWeek[]
+  languages: { [lang: string]: number }
+}
+
+// Helper to get color for a language
+function getLangColor(lang: string): string {
+  // @ts-ignore
+  return colorsData[lang]?.color || '#444'
+}
 
 function GitHubStatsWidget({
   token,
@@ -9,7 +38,7 @@ function GitHubStatsWidget({
   onLogout: () => void
 }): JSX.Element {
   const [loading, setLoading] = useState(true)
-  const [contribWeeks, setContribWeeks] = useState<any[] | null>(null)
+  const [contribWeeks, setContribWeeks] = useState<ContributionWeek[] | null>(null)
   const [languages, setLanguages] = useState<{ [lang: string]: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -17,6 +46,18 @@ function GitHubStatsWidget({
     async function fetchStats(): Promise<void> {
       setLoading(true)
       setError(null)
+
+      const cachedDataJSON = localStorage.getItem(CACHE_KEY)
+      if (cachedDataJSON) {
+        const cachedData: CachedData = JSON.parse(cachedDataJSON)
+        if (Date.now() - cachedData.timestamp < CACHE_DURATION) {
+          setContribWeeks(cachedData.contribWeeks)
+          setLanguages(cachedData.languages)
+          setLoading(false)
+          return
+        }
+      }
+
       try {
         // Fetch user login from GitHub API
         const userRes = await fetch('https://api.github.com/user', {
@@ -54,7 +95,8 @@ function GitHubStatsWidget({
           })
         })
         const graphData = await graphRes.json()
-        const weeks = graphData.data.user.contributionsCollection.contributionCalendar.weeks
+        const weeks: ContributionWeek[] =
+          graphData.data.user.contributionsCollection.contributionCalendar.weeks
         setContribWeeks(weeks)
 
         // Fetch language stats from GitHub API
@@ -75,6 +117,13 @@ function GitHubStatsWidget({
           }
         }
         setLanguages(langTotals)
+
+        const dataToCache: CachedData = {
+          timestamp: Date.now(),
+          contribWeeks: weeks,
+          languages: langTotals
+        }
+        localStorage.setItem(CACHE_KEY, JSON.stringify(dataToCache))
       } catch {
         setError('Failed to fetch GitHub stats.')
       }
@@ -86,26 +135,47 @@ function GitHubStatsWidget({
   if (loading) return <div>Loading GitHub stats...</div>
   if (error) return <div>{error}</div>
 
+  const totalLangCount = languages
+    ? Object.values(languages).reduce((sum, count) => sum + count, 0)
+    : 0
+
+  // Get top 4 languages
+  const topLanguages = languages
+    ? Object.entries(languages)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 4)
+    : []
+
   return (
-    <div>
-      {/* <button onClick={onLogout}>Logout</button> */}
-      {/* <h2>GitHub Contribution Graph</h2> */}
+    <div className="hover-container">
+      <button onClick={onLogout} className="logout-btn-hover">
+        <SettingsGearIcon size={22} />
+      </button>
       {contribWeeks && <ContributionGrid weeks={contribWeeks} />}
-      {/* <h2>Language Usage</h2> */}
-      {/* {languages && (
-        <div style={{ display: 'flex', gap: 8 }}>
-          {Object.entries(languages).map(([lang, count]) => (
-            <div key={lang} style={{ textAlign: 'center' }}>
-              <div
-                className='language-bar'
-              />
-              <div>{lang}</div>
-            </div>
-          ))}
+      {topLanguages.length > 0 && (
+        <div className="language-bar-container" style={{ justifyContent: 'flex-start', position: "relative", zIndex: 10 }}>
+          {topLanguages.map(([lang, count]) => {
+            const percentage = ((count / totalLangCount) * 100).toFixed(1)
+            return (
+              <div key={lang} style={{ position: 'relative' }}>
+                <div
+                  className="language-bar"
+                  style={{
+                    backgroundColor: getLangColor(lang),
+                  }}
+                  title={`${lang}: ${percentage}%`}
+                />
+                {/* Tooltip */}
+                <div className="lang-tooltip" style={{ zIndex: 1000 }}>
+                  {lang}: {percentage}%
+                </div>
+              </div>
+            )
+          })}
         </div>
-      )} */}
+      )}
     </div>
   )
 }
 
-export default GitHubStatsWidget 
+export default GitHubStatsWidget

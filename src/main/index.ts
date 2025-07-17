@@ -1,6 +1,5 @@
-import { shell, BrowserWindow, app, ipcMain, screen } from 'electron'
+import { shell, BrowserWindow, app, ipcMain } from 'electron'
 import { join } from 'path'
-import { is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import path from 'path'
@@ -69,7 +68,7 @@ async function exchangeCodeForToken(code: string): Promise<string> {
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on('second-instance', (event, argv, workingDirectory) => {
+  app.on('second-instance', (event, argv) => {
     // This happens on Windows when gitWidget://auth?code=XYZ is triggered
     if (process.platform === 'win32') {
       const deeplink = argv.find(arg => arg.toLowerCase().startsWith('gitwidget://'));
@@ -86,13 +85,13 @@ if (!gotTheLock) {
 }
 
 function createWindow(): BrowserWindow {
-  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
     width: 350,
-    height: 130,
+    height: 160,
     show: false,
+    minHeight: 160,
     maxWidth: 820,
-    maxHeight: 130,
+    maxHeight: 160,
     backgroundColor: '#000000',
     autoHideMenuBar: true,
     frame: false,
@@ -130,9 +129,9 @@ function createWindow(): BrowserWindow {
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+  if (process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
@@ -177,4 +176,10 @@ ipcMain.handle('logout', () => {
   if (mainWindow) {
     mainWindow.webContents.send('logged-out');
   }
+});
+
+ipcMain.on('open-github-auth', () => {
+  shell.openExternal(
+    'https://github.com/login/oauth/authorize?client_id=Ov23liqbrmV9VGJ7Y5AQ&redirect_uri=gitWidget://auth&scope=read:user'
+  );
 });
