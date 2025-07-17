@@ -86,11 +86,12 @@ if (!gotTheLock) {
 
 function createWindow(): BrowserWindow {
   mainWindow = new BrowserWindow({
-    width: 350,
+    width: 216,
     height: 160,
     show: false,
     minHeight: 160,
-    maxWidth: 820,
+    minWidth: 216,
+    maxWidth: 216,
     maxHeight: 160,
     backgroundColor: '#000000',
     autoHideMenuBar: true,

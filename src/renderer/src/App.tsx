@@ -54,15 +54,7 @@ function App(): JSX.Element {
 
   return (
     <div className="widget-container">
-      {/* <div className="widget-header">
-        <span>GitHub Widget</span>
-        {token && (
-          <button title="Logout" onClick={onLogout}>
-            ×
-          </button>
-        )}
-      </div> */}
-      <div style={{padding: 12}}>
+      <div style={{padding: 12, width: '100%'}}>
         {!token ? (
           <button className='signin-btn' onClick={onGitHubSignIn}>
             {loading ? 'Loading...' : 'Sign in with GitHub'}

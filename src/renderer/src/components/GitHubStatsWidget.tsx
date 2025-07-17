@@ -1,8 +1,8 @@
 import { useEffect, useState, type JSX } from 'react'
 import ContributionGrid from './ContributionGrid'
 import colorsData from '../../../../colors.json'
-import { LogoutIcon } from './LogoutComponent'
 import { SettingsGearIcon } from './SettingsIcon'
+import { useRef } from 'react'
 
 const CACHE_KEY = 'github-stats-cache'
 const CACHE_DURATION = 5 * 60 * 60 * 1000 // 5 hours in milliseconds
@@ -26,9 +26,15 @@ interface CachedData {
 
 // Helper to get color for a language
 function getLangColor(lang: string): string {
-  // @ts-ignore
+  // @ts-ignore: colorsData is a JSON object with dynamic keys for language colors
   return colorsData[lang]?.color || '#444'
 }
+
+const DURATION_OPTIONS = [
+  { label: '3 Months', value: 3 },
+  { label: '6 Months', value: 6 },
+  { label: '1 Year', value: 12 }
+]
 
 function GitHubStatsWidget({
   token,
@@ -41,6 +47,24 @@ function GitHubStatsWidget({
   const [contribWeeks, setContribWeeks] = useState<ContributionWeek[] | null>(null)
   const [languages, setLanguages] = useState<{ [lang: string]: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [duration, setDuration] = useState<number>(3)
+  const [menuOpen, setMenuOpen] = useState(false)
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  // Close menu on outside click
+  useEffect(() => {
+    function handleClick(e: MouseEvent): void {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false)
+      }
+    }
+    if (menuOpen) {
+      document.addEventListener('mousedown', handleClick)
+    } else {
+      document.removeEventListener('mousedown', handleClick)
+    }
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [menuOpen])
 
   useEffect((): void => {
     async function fetchStats(): Promise<void> {
@@ -139,36 +163,93 @@ function GitHubStatsWidget({
     ? Object.values(languages).reduce((sum, count) => sum + count, 0)
     : 0
 
-  // Get top 4 languages
   const topLanguages = languages
     ? Object.entries(languages)
         .sort((a, b) => b[1] - a[1])
         .slice(0, 4)
     : []
 
+  // Filter contribWeeks by selected duration
+  let filteredWeeks = contribWeeks
+  if (contribWeeks) {
+    const today = new Date()
+    const monthsAgo = new Date(today)
+    monthsAgo.setMonth(today.getMonth() - duration)
+    filteredWeeks = contribWeeks.filter(week => {
+      // week.firstDay is ISO string
+      const weekDate = new Date(week.firstDay)
+      return weekDate >= monthsAgo
+    })
+  }
+
+  // Calculate widget width (e.g. 16px per week + padding)
+  const weekCount = filteredWeeks ? filteredWeeks.length : 0
+  const widgetWidth = 16 * weekCount + 32 // 16px per week, 32px padding
+
   return (
-    <div className="hover-container">
-      <button onClick={onLogout} className="logout-btn-hover">
-        <SettingsGearIcon size={22} />
-      </button>
-      {contribWeeks && <ContributionGrid weeks={contribWeeks} />}
+    <div
+      className={"hover-container github-widget-container"}
+      style={{ width: widgetWidth }}
+    >
+      {/* <div className="settings-menu-wrapper">
+        <button
+          onClick={() => setMenuOpen(v => !v)}
+          className="settings-gear-btn logout-btn-hover"
+          onMouseEnter={() => setMenuOpen(true)}
+        >
+          <SettingsGearIcon size={22} />
+        </button>
+        {menuOpen && (
+          <div
+            ref={menuRef}
+            className="settings-menu"
+            onMouseLeave={() => setMenuOpen(false)}
+          >
+            <div className="settings-menu-tabs">
+              {DURATION_OPTIONS.map(opt => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    setDuration(opt.value)
+                    setMenuOpen(false)
+                  }}
+                  className={
+                    'settings-menu-tab' + (duration === opt.value ? ' selected' : '')
+                  }
+                >
+                  {opt.label}
+                </button>
+              ))}
+            </div>
+            <hr className="settings-menu-divider" />
+            <button
+              onClick={onLogout}
+              className="settings-menu-logout"
+            >
+              Logout
+            </button>
+          </div>
+        )}
+      </div> */}
+      {filteredWeeks && <ContributionGrid weeks={filteredWeeks} />}
       {topLanguages.length > 0 && (
-        <div className="language-bar-container" style={{ justifyContent: 'flex-start', position: "relative", zIndex: 10 }}>
+        <div className="language-bar-container">
           {topLanguages.map(([lang, count]) => {
             const percentage = ((count / totalLangCount) * 100).toFixed(1)
             return (
-              <div key={lang} style={{ position: 'relative' }}>
+              <div key={lang} className='language-bar-cont' style={{ position: 'relative' }}>
                 <div
                   className="language-bar"
                   style={{
                     backgroundColor: getLangColor(lang),
+                    position: 'relative'
                   }}
-                  title={`${lang}: ${percentage}%`}
-                />
-                {/* Tooltip */}
-                <div className="lang-tooltip" style={{ zIndex: 1000 }}>
-                  {lang}: {percentage}%
+                >
                 </div>
+                {/* show name and percentage on hover */}
+                  {/* <div className="lang-tooltip">
+                    {lang}: {percentage}%
+                  </div> */}
               </div>
             )
           })}

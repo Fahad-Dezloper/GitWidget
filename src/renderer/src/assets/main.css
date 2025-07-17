@@ -266,41 +266,32 @@ code {
 }
 
 .lang-tooltip {
-  display: none;
-  position: absolute;
-  left: 50%;
-  top: -32px;
-  transform: translateX(-50%);
-  background: #222;
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 6px;
-  font-size: 13px;
-  white-space: nowrap;
-  z-index: 10;
-  pointer-events: none;
-}
-.language-bar-container div:hover .lang-tooltip {
-  display: block;
-}
-.language-bar-container {
   display: flex;
-  gap: 18px;
+  white-space: nowrap;
+  font-size: 10px;
+}
+er {
+  display: flex;
+  gap: 14px;
   align-items: center;
   border-radius: 12px;
-  min-height: 40px;
   background: transparent;
 }
+
+.language-bar-container {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+}
+
 .language-bar {
-  transition: box-shadow 0.2s;
-  cursor: pointer;
-  min-width: 24vh;
-  height: 10px;
   border-radius: 9999px;
   cursor: pointer;
-}
-.language-bar:hover {
-  box-shadow: 0 0 0 2px #fff, 0 2px 8px #0008;
+  min-width: 20vh;
+  max-width: 20vh;
+  height: 10px;
+  position: absolute;
+  cursor: pointer;
 }
 
 /* Hide browser scrollbars */
@@ -322,8 +313,8 @@ code {
   transition: opacity 0.2s;
   z-index: 10;
   position: absolute;
-  bottom: 10px;
-  right: 0px;
+  top: 10px;
+  left: 50px;
   background: none;
   border: none;
   color: #fff;
@@ -332,7 +323,7 @@ code {
   -webkit-app-region: no-drag;
   padding: 0 6px;
 }
-.hover-container:hover .logout-btn-hover {
+.github-widget-container:hover .logout-btn-hover {
   opacity: 1 !important;
   pointer-events: auto !important;
 }
@@ -342,6 +333,7 @@ code {
   margin-bottom: 12px;
   padding: 12px;
   border-radius: 12px;
+  overflow: hidden;
   background-color: #23272f;
   color: #fff;
   z-index: 999;
@@ -360,4 +352,101 @@ code {
 .signin-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+/* GitHubStatsWidget custom styles */
+.github-widget-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 100%;
+  min-width: 200px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.settings-menu-wrapper {
+  /* position: relative; */
+  /* display: inline-block; */
+  z-index: 20;
+}
+
+.settings-gear-btn {
+  z-index: 20;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 6px;
+  -webkit-app-region: no-drag;
+}
+
+.settings-menu {
+  position: absolute;
+  top: 30px;
+  left: 50px;
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 100;
+  min-width: 120px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeInMenu 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes fadeInMenu {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.settings-menu-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-menu-tab {
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: normal;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+.settings-menu-tab:hover {
+  background: #333;
+}
+.settings-menu-tab.selected {
+  background: #444;
+  font-weight: bold;
+}
+
+.settings-menu-divider {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 6px 0;
+}
+
+.settings-menu-logout {
+  background: transparent;
+  color: #f55;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: normal;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+.settings-menu-logout:hover {
+  background: #333;
+  color: #fff;
 }
