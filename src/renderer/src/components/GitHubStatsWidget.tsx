@@ -1,7 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState, type JSX } from 'react'
 import ContributionGrid from './ContributionGrid'
 import colorsData from '../../../../colors.json'
-import { SettingsGearIcon } from './SettingsIcon'
 import { useRef } from 'react'
 
 const CACHE_KEY = 'github-stats-cache'
@@ -30,24 +30,19 @@ function getLangColor(lang: string): string {
   return colorsData[lang]?.color || '#444'
 }
 
-const DURATION_OPTIONS = [
-  { label: '3 Months', value: 3 },
-  { label: '6 Months', value: 6 },
-  { label: '1 Year', value: 12 }
-]
-
 function GitHubStatsWidget({
   token,
+  // @ts-ignore: onLogout is a function
   onLogout
 }: {
-  token: string
+  token: string,
   onLogout: () => void
 }): JSX.Element {
   const [loading, setLoading] = useState(true)
   const [contribWeeks, setContribWeeks] = useState<ContributionWeek[] | null>(null)
   const [languages, setLanguages] = useState<{ [lang: string]: number } | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [duration, setDuration] = useState<number>(3)
+  const [duration] = useState<number>(3)
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -159,6 +154,7 @@ function GitHubStatsWidget({
   if (loading) return <div>Loading GitHub stats...</div>
   if (error) return <div>{error}</div>
 
+  // @ts-ignore: intentional
   const totalLangCount = languages
     ? Object.values(languages).reduce((sum, count) => sum + count, 0)
     : 0
@@ -175,7 +171,7 @@ function GitHubStatsWidget({
     const today = new Date()
     const monthsAgo = new Date(today)
     monthsAgo.setMonth(today.getMonth() - duration)
-    filteredWeeks = contribWeeks.filter(week => {
+    filteredWeeks = contribWeeks.filter((week) => {
       // week.firstDay is ISO string
       const weekDate = new Date(week.firstDay)
       return weekDate >= monthsAgo
@@ -187,10 +183,7 @@ function GitHubStatsWidget({
   const widgetWidth = 16 * weekCount + 32 // 16px per week, 32px padding
 
   return (
-    <div
-      className={"hover-container github-widget-container"}
-      style={{ width: widgetWidth }}
-    >
+    <div className={'hover-container github-widget-container'} style={{ width: widgetWidth }}>
       {/* <div className="settings-menu-wrapper">
         <button
           onClick={() => setMenuOpen(v => !v)}
@@ -234,20 +227,19 @@ function GitHubStatsWidget({
       {filteredWeeks && <ContributionGrid weeks={filteredWeeks} />}
       {topLanguages.length > 0 && (
         <div className="language-bar-container">
+          {/* @ts-ignore: i know motherfucker */}
           {topLanguages.map(([lang, count]) => {
-            const percentage = ((count / totalLangCount) * 100).toFixed(1)
             return (
-              <div key={lang} className='language-bar-cont' style={{ position: 'relative' }}>
+              <div key={lang} className="language-bar-cont" style={{ position: 'relative' }}>
                 <div
                   className="language-bar"
                   style={{
                     backgroundColor: getLangColor(lang),
                     position: 'relative'
                   }}
-                >
-                </div>
+                ></div>
                 {/* show name and percentage on hover */}
-                  {/* <div className="lang-tooltip">
+                {/* <div className="lang-tooltip">
                     {lang}: {percentage}%
                   </div> */}
               </div>

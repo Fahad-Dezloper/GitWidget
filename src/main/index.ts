@@ -68,7 +68,7 @@ async function exchangeCodeForToken(code: string): Promise<string> {
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on('second-instance', (event, argv) => {
+  app.on('second-instance', (_event, argv) => {
     // This happens on Windows when gitWidget://auth?code=XYZ is triggered
     if (process.platform === 'win32') {
       const deeplink = argv.find(arg => arg.toLowerCase().startsWith('gitwidget://'));
@@ -88,16 +88,18 @@ function createWindow(): BrowserWindow {
   mainWindow = new BrowserWindow({
     width: 216,
     height: 160,
-    show: false,
     minHeight: 160,
     minWidth: 216,
     maxWidth: 216,
     maxHeight: 160,
-    backgroundColor: '#000000',
+    backgroundColor: '#00000000', // Fully transparent for rounded corners
     autoHideMenuBar: true,
+    roundedCorners: true,
     frame: false,
-    alwaysOnTop: true,
-    transparent: false,
+    alwaysOnTop: false,
+    focusable: false,
+    transparent: true,
+    hasShadow: false,
     resizable: true,
     skipTaskbar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -106,6 +108,12 @@ function createWindow(): BrowserWindow {
       // sandbox: true
     }
   })
+
+  // Make the window visible only on the desktop background (behind all app windows), but not above browsers/editors.
+  // 'desktop' is not a valid level, so use 'screen-saver' and then immediately disable always-on-top.
+  mainWindow.setAlwaysOnTop(true, 'screen-saver'); // temporarily set to 'screen-saver' to move to desktop layer
+  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  mainWindow.setAlwaysOnTop(false); // remove always-on-top so it stays behind all normal windows
 
   // if (is.dev) {
   //   mainWindow.webContents.openDevTools({ mode: 'detach' });
@@ -124,7 +132,7 @@ function createWindow(): BrowserWindow {
     console.log('✅ Renderer loaded successfully')
   })
   
-  mainWindow.webContents.on('did-fail-load', (event, code, desc) => {
+  mainWindow.webContents.on('did-fail-load', (_event, code, desc) => {
     console.error('❌ Renderer failed to load:', code, desc)
   })
 
@@ -132,7 +140,7 @@ function createWindow(): BrowserWindow {
   // Load the remote URL for development or the local html file for production.
   if (process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    mainWindow.webContents.openDevTools()
+      // mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
