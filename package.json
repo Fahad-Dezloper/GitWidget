@@ -80,7 +80,9 @@
     },
     "publish": [
       {
-        "provider": "github"
+        "provider": "github",
+        "owner": "Fahad-Dezloper",
+        "repo": "GitWidget"
       }
     ]
   }
