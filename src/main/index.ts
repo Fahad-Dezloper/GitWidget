@@ -69,11 +69,23 @@ function handleDeepLink(deepLink: string): void {
       const url = new URL(deepLink);
       const code = url.searchParams.get('code');
       if (code) {
-        console.log('🔑 GitHub OAuth Code received:', code);
+        console.log('🔑 GitHub OAuth Code received');
         exchangeCodeForToken(code).then(token => {
-          console.log("✅ Token received:", token);
+          console.log("✅ Token received");
           store.set('access_token', token); // Save token
-          mainWindow?.webContents.send('auth-success', token); // Notify renderer
+          
+          // Show and focus the widget window
+          mainWindow?.show();
+          mainWindow?.focus();
+          mainWindow?.setAlwaysOnTop(true);
+          
+          // Notify renderer about successful authentication
+          mainWindow?.webContents.send('auth-success', token);
+          
+          // Reset always on top after a short delay
+          setTimeout(() => {
+            mainWindow?.setAlwaysOnTop(false);
+          }, 2000);
         }).catch(err => {
           console.error("❌ Token exchange failed:", err);
         });
@@ -177,6 +189,7 @@ function createWindow(): BrowserWindow {
 
   if (process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
+    // mainWindow.webContents.openDevTools({ mode: 'detach' });
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }

@@ -79,7 +79,6 @@ In `src/main/index.ts`, modify the timeout:
 
 ```typescript
 autoUpdater.on('update-downloaded', (info) => {
-  console.log('✅ Update downloaded:', info.version);
   if (mainWindow) {
     mainWindow.webContents.send('update-downloaded', info);
   }
