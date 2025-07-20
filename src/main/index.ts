@@ -3,8 +3,53 @@ import { join } from 'path'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import path from 'path'
+import { autoUpdater } from 'electron-updater'
 
 const store = new Store();
+
+// Auto-updater configuration - will be initialized after app is ready
+
+// Auto-updater event handlers
+autoUpdater.on('checking-for-update', () => {
+  console.log('🔍 Checking for update...');
+});
+
+autoUpdater.on('update-available', (info) => {
+  console.log('📦 Update available:', info.version);
+  // Notify renderer process about available update
+  if (mainWindow) {
+    mainWindow.webContents.send('update-available', info);
+  }
+});
+
+autoUpdater.on('update-not-available', (info) => {
+  console.log('✅ Update not available:', info.version);
+});
+
+autoUpdater.on('error', (err) => {
+  console.error('❌ Error in auto-updater:', err);
+  if (mainWindow) {
+    mainWindow.webContents.send('update-error', err.message);
+  }
+});
+
+autoUpdater.on('download-progress', (progress) => {
+  console.log(`📥 Download progress: ${Math.round(progress.percent)}%`);
+  if (mainWindow) {
+    mainWindow.webContents.send('download-progress', progress);
+  }
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  console.log('✅ Update downloaded:', info.version);
+  if (mainWindow) {
+    mainWindow.webContents.send('update-downloaded', info);
+  }
+  // Auto-install after 5 seconds
+  setTimeout(() => {
+    autoUpdater.quitAndInstall();
+  }, 5000);
+});
 
 if (process.defaultApp) {
   if (process.argv.length >= 2) {
@@ -142,7 +187,30 @@ function createWindow(): BrowserWindow {
 app.whenReady().then(async () => {
   console.log("app ready here")
 
+  // Suppress common Electron development warnings
+  if (process.env.NODE_ENV === 'development') {
+    const originalConsoleError = console.error;
+    console.error = (...args) => {
+      const message = args[0]?.toString() || '';
+      if (
+        message.includes('chrome_100_percent.pak') ||
+        message.includes('Unable to move the cache') ||
+        message.includes('Unable to create cache') ||
+        message.includes('Gpu Cache Creation failed')
+      ) {
+        return; // Suppress these development warnings
+      }
+      originalConsoleError.apply(console, args);
+    };
+  }
+
   mainWindow = createWindow()
+
+  // Initialize auto-updater after window is created
+  if (!process.env['ELECTRON_RENDERER_URL']) {
+    // Only check for updates in production
+    autoUpdater.checkForUpdatesAndNotify();
+  }
 
   mainWindow?.webContents.on('did-finish-load', async () => {
     console.log('✅ Renderer loaded successfully')
@@ -182,4 +250,20 @@ ipcMain.on('open-github-auth', () => {
   shell.openExternal(
     'https://github.com/login/oauth/authorize?client_id=Ov23liqbrmV9VGJ7Y5AQ&redirect_uri=gitWidget://auth&scope=read:user'
   );
+});
+
+// Auto-updater IPC handlers
+ipcMain.handle('check-for-updates', () => {
+  console.log('[main] Manual update check requested');
+  return autoUpdater.checkForUpdatesAndNotify();
+});
+
+ipcMain.handle('install-update', () => {
+  console.log('[main] Update installation requested');
+  autoUpdater.quitAndInstall();
+});
+
+ipcMain.handle('get-app-version', () => {
+  console.log('[main] App version requested');
+  return app.getVersion();
 });

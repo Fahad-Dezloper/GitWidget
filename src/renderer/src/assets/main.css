@@ -446,3 +446,95 @@ er {
   background: #333;
   color: #fff;
 }
+
+/* Auto-updater notification styles */
+.update-notification {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #23272f;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  max-width: 200px;
+  text-align: center;
+  font-size: 12px;
+  animation: slideDown 0.3s ease-out;
+  -webkit-app-region: no-drag;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.update-notification p {
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.update-notification button {
+  background: #0969da;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  -webkit-app-region: no-drag;
+}
+
+.update-notification button:hover {
+  background: #0860ca;
+}
+
+.update-notification.error {
+  background: #da1e37;
+  border-color: #c41e3a;
+}
+
+.update-notification.error button {
+  background: #fff;
+  color: #da1e37;
+}
+
+.update-notification.error button:hover {
+  background: #f0f0f0;
+}
+
+.update-notification.ready {
+  background: #28a745;
+  border-color: #20c997;
+}
+
+.update-notification.downloading {
+  background: #17a2b8;
+  border-color: #138496;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}

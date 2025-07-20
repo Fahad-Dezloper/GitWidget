@@ -1,5 +1,6 @@
 import { useEffect, useState, type JSX } from 'react'
 import GitHubStatsWidget from './components/GitHubStatsWidget'
+import UpdateNotification from './components/UpdateNotification'
 
 function App(): JSX.Element {
   const [token, setToken] = useState<string | null>(null)
@@ -52,6 +53,7 @@ function App(): JSX.Element {
 
   return (
     <div className="widget-container">
+      <UpdateNotification />
       <div style={{padding: 12, width: '100%'}}>
         {!token ? (
           <button className='signin-btn' onClick={onGitHubSignIn}>
