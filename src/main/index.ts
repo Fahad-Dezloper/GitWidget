@@ -92,7 +92,7 @@ function createWindow(): BrowserWindow {
     minWidth: 216,
     maxWidth: 216,
     maxHeight: 160,
-    backgroundColor: '#00000000', // Fully transparent for rounded corners
+    backgroundColor: '#00000000',
     autoHideMenuBar: true,
     roundedCorners: true,
     frame: false,
@@ -109,15 +109,9 @@ function createWindow(): BrowserWindow {
     }
   })
 
-  // Make the window visible only on the desktop background (behind all app windows), but not above browsers/editors.
-  // 'desktop' is not a valid level, so use 'screen-saver' and then immediately disable always-on-top.
-  mainWindow.setAlwaysOnTop(true, 'screen-saver'); // temporarily set to 'screen-saver' to move to desktop layer
+  mainWindow.setAlwaysOnTop(true, 'screen-saver');
   mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
-  mainWindow.setAlwaysOnTop(false); // remove always-on-top so it stays behind all normal windows
-
-  // if (is.dev) {
-  //   mainWindow.webContents.openDevTools({ mode: 'detach' });
-  // }
+  mainWindow.setAlwaysOnTop(false);
 
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
@@ -136,11 +130,8 @@ function createWindow(): BrowserWindow {
     console.error('❌ Renderer failed to load:', code, desc)
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
   if (process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-      // mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }

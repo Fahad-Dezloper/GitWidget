@@ -37,7 +37,6 @@ function App(): JSX.Element {
       console.warn('⚠️ window.electron.invoke is undefined')
     }
 
-    // Listen for auth-success and logged-out events from main
     const handler = (_event: unknown, newToken: string): void => {
       setToken(newToken)
     }
@@ -48,7 +47,6 @@ function App(): JSX.Element {
     window.electron.on('auth-success', handler)
     // @ts-ignore: Electron custom API for IPC event
     window.electron.on('logged-out', logoutHandler)
-    // Return undefined to match void return type
     return undefined
   }, [])
 
