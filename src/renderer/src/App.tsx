@@ -1,75 +1,71 @@
-import { useEffect, useState } from 'react'
-import Versions from './components/Versions'
+import { useEffect, useState, type JSX } from 'react'
+import GitHubStatsWidget from './components/GitHubStatsWidget'
 
-function App(): React.JSX.Element {
+function App(): JSX.Element {
   const [token, setToken] = useState<string | null>(null)
-  const onGitHubSignIn = (): void => {
-    // @ts-ignore (define in dts)
-    window.electron.openExternal('http://localhost:3000/auth');
-  };
+  const [loading, setLoading] = useState(false)
 
-  useEffect(() => {
-    // @ts-ignore (define in dts)
+  const onGitHubSignIn = (): void => {
+    setLoading(true)
+    window.electron.openGitHubAuth()
+  }
+
+  const onLogout = async (): Promise<void> => {
+    await window.electron.invoke('logout')
+    setToken(null)
+  }
+
+  useEffect((): void => {
     if (window?.electron?.invoke) {
       window.electron
-      // @ts-ignore (define in dts)
         .invoke('get-token')
         .then((storedToken) => {
-          console.log('✅ Token:', storedToken)
           setToken(storedToken || null)
         })
         .catch((err) => {
           console.error('❌ Failed to get token:', err)
         })
     } else {
-      console.warn('⚠️ window.electron.invoke is undefined');
+      console.warn('⚠️ window.electron.invoke is undefined')
     }
-  }, []);
 
-  const onSignOut = (): void => {
-    // @ts-ignore (define in dts)
-    window.electron.invoke('set-token', null);
-    setToken(null)
-  }
-
-  const onSetToken = (token: string): void => {
-    console.log('onSetToken', token)
-    // @ts-ignore (define in dts)
-    window.electron.invoke('set-token', token);
-    setToken(token)
-  }
+    // Listen for auth-success and logged-out events from main
+    const handler = (_event: unknown, newToken: string): void => {
+      setToken(newToken)
+      setLoading(false)
+    }
+    const logoutHandler = (): void => {
+      setToken(null)
+      setLoading(false)
+    }
+    // @ts-ignore: Electron custom API for IPC event
+    window.electron.on('auth-success', handler)
+    // @ts-ignore: Electron custom API for IPC event
+    window.electron.on('logged-out', logoutHandler)
+    // Return undefined to match void return type
+    return undefined
+  }, [])
 
   return (
-    <>
-      <div className="actions">
-        <div className="action">
-          <a href="https://electron-vite.org/" target="_blank" rel="noreferrer">
-            Documentation
-          </a>
-        </div>
-        {token ? (
-          <div className="action">
-            <a target="_blank" rel="noreferrer" onClick={onSignOut}>
-              Sign Out
-            </a>
-          </div>
+    <div className="widget-container">
+      {/* <div className="widget-header">
+        <span>GitHub Widget</span>
+        {token && (
+          <button title="Logout" onClick={onLogout}>
+            ×
+          </button>
+        )}
+      </div> */}
+      <div style={{ padding: 16 }}>
+        {!token ? (
+          <button onClick={onGitHubSignIn} disabled={loading} style={{ width: '100%', marginBottom: 12 }}>
+            {loading ? 'Loading...' : 'Sign in with GitHub'}
+          </button>
         ) : (
-          <>
-          <div className="action">
-            <a target="_blank" rel="noreferrer" onClick={onGitHubSignIn}>
-              Sign In with Github
-            </a>
-          </div>
-          <div className="action">
-            <a target="_blank" rel="noreferrer" onClick={() => onSetToken('1234567890')}>
-              Set token
-            </a>
-          </div>
-          </>
+          <GitHubStatsWidget token={token} onLogout={onLogout} />
         )}
       </div>
-      <Versions></Versions>
-    </>
+    </div>
   )
 }
 
