@@ -3,41 +3,51 @@ name: Build and Release
 on:
   push:
     tags:
-      - 'v*'  # Triggers on version tags like v1.0.0, v1.2.3, etc.
+      - 'v*'
 
 jobs:
-  release:
-    runs-on: ${{ matrix.os }}
-    
-    strategy:
-      matrix:
-        os: [windows-latest, macos-latest]
+  build-windows:
+    runs-on: windows-latest
 
     steps:
-      - name: Check out Git repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Node.js
+      - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and release
+      - name: Build and publish (Windows)
         env:
           GH_TOKEN: ${{ secrets.SIGN_TOKEN }}
         run: |
           npm run build
           npm run build:win
-        if: matrix.os == 'windows-latest'
 
-      - name: Build and release (macOS)
+  build-macos:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and publish (macOS)
         env:
           GH_TOKEN: ${{ secrets.SIGN_TOKEN }}
         run: |
           npm run build
           npm run build:mac
-        if: matrix.os == 'macos-latest'
