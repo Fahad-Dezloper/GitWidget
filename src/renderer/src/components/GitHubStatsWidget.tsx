@@ -179,8 +179,8 @@ function GitHubStatsWidget({
     })
   }
 
-  const weekCount = filteredWeeks ? filteredWeeks.length : 0
-  const widgetWidth = 16 * weekCount + 32
+  // const weekCount = filteredWeeks ? filteredWeeks.length : 0
+  // const widgetWidth = 16 * weekCount + 32
 
   return (
     <div className={'hover-container github-widget-container'} >
