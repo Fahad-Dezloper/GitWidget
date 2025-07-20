@@ -28,7 +28,7 @@ jobs:
 
       - name: Build and release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SIGN_TOKEN }}
         run: |
           npm run build
           npm run build:win
@@ -36,7 +36,7 @@ jobs:
 
       - name: Build and release (macOS)
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SIGN_TOKEN }}
         run: |
           npm run build
           npm run build:mac
@@ -44,7 +44,7 @@ jobs:
 
       - name: Build and release (Linux)
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.SIGN_TOKEN }}
         run: |
           npm run build
           npm run build:linux
