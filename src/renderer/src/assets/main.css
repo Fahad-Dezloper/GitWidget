@@ -1,11 +1,10 @@
 @import './base.css';
 
-/* Add widget container styles */
 .widget-container {
   width: 100%;
   height: 100%;
+  border-radius: 14px;
   background: #000;
-  border-radius: 18px;
   box-shadow: 0 4px 32px rgba(0,0,0,0.25);
   overflow: hidden;
   padding: 0;
@@ -51,6 +50,8 @@ body {
   min-height: 0;
   margin: 0;
   padding: 0;
+  -webkit-app-region: drag;
+  border-radius: 18px;
 }
 
 #root {
@@ -228,8 +229,8 @@ code {
   max-width: 100%;
   max-height: 100%;
   box-sizing: border-box;
-  grid-auto-flow: column; /* Fill column by column */
-  -webkit-app-region: no-drag; /* Make the grid background draggable */
+  grid-auto-flow: column;
+  -webkit-app-region: no-drag;
 }
 
 .box {
@@ -241,10 +242,9 @@ code {
   box-sizing: border-box;
   min-width: 12px;
   min-height: 12px;
-  -webkit-app-region: no-drag; /* Ensure tooltips work on hover */
+  -webkit-app-region: no-drag;
 }
 
-/* GitHub-style contribution colors */
 .box[data-level="0"] {
   background-color: #161b22 !important;
 }
@@ -265,15 +265,184 @@ code {
   background-color: #39d353 !important;
 }
 
-.language-bar {
-  background: #eee;
-  width: 40px;
-  border-radius: 10px;
-  height: 10px;
-  margin: 0 auto;
+.lang-tooltip {
+  display: flex;
+  white-space: nowrap;
+  font-size: 10px;
+}
+er {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  border-radius: 12px;
+  background: transparent;
 }
 
-/* Hide browser scrollbars */
+.language-bar-container {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+}
+
+.language-bar {
+  border-radius: 9999px;
+  cursor: pointer;
+  min-width: 20vh;
+  max-width: 20vh;
+  height: 10px;
+  position: absolute;
+  cursor: pointer;
+}
+
 ::-webkit-scrollbar {
   display: none;
+}
+
+.hover-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 150px;
+  min-width: 300px;
+}
+
+.logout-btn-hover{
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  z-index: 10;
+  position: absolute;
+  top: 10px;
+  left: 50px;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  padding: 0 6px;
+}
+.github-widget-container:hover .logout-btn-hover {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
+
+.signin-btn {
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  overflow: hidden;
+  background-color: #23272f;
+  color: #fff;
+  z-index: 999;
+  border: none;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+
+.signin-btn:hover {
+  background-color: #161b22;
+  color: #fff;
+  border-color: #161b22;
+}
+
+.signin-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.github-widget-container {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 100%;
+  min-width: 200px;
+  transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+  box-sizing: border-box;
+  background: transparent;
+}
+
+.settings-menu-wrapper {
+  z-index: 20;
+}
+
+.settings-gear-btn {
+  z-index: 20;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 6px;
+  -webkit-app-region: no-drag;
+}
+
+.settings-menu {
+  position: absolute;
+  top: 30px;
+  left: 50px;
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 100;
+  min-width: 120px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  animation: fadeInMenu 0.18s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes fadeInMenu {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.settings-menu-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-menu-tab {
+  background: transparent;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: normal;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+.settings-menu-tab:hover {
+  background: #333;
+}
+.settings-menu-tab.selected {
+  background: #444;
+  font-weight: bold;
+}
+
+.settings-menu-divider {
+  border: none;
+  border-top: 1px solid #333;
+  margin: 6px 0;
+}
+
+.settings-menu-logout {
+  background: transparent;
+  color: #f55;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-weight: normal;
+  text-align: left;
+  transition: background 0.2s, color 0.2s;
+}
+.settings-menu-logout:hover {
+  background: #333;
+  color: #fff;
 }

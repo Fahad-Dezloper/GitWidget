@@ -1,6 +1,5 @@
-import { shell, BrowserWindow, app, ipcMain, screen } from 'electron'
+import { shell, BrowserWindow, app, ipcMain } from 'electron'
 import { join } from 'path'
-import { is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import Store from 'electron-store'
 import path from 'path'
@@ -69,7 +68,7 @@ async function exchangeCodeForToken(code: string): Promise<string> {
 if (!gotTheLock) {
   app.quit();
 } else {
-  app.on('second-instance', (event, argv, workingDirectory) => {
+  app.on('second-instance', (_event, argv) => {
     // This happens on Windows when gitWidget://auth?code=XYZ is triggered
     if (process.platform === 'win32') {
       const deeplink = argv.find(arg => arg.toLowerCase().startsWith('gitwidget://'));
@@ -86,18 +85,21 @@ if (!gotTheLock) {
 }
 
 function createWindow(): BrowserWindow {
-  const { width, height } = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
-    width: 350,
-    height: 130,
-    show: false,
-    maxWidth: 820,
-    maxHeight: 130,
-    backgroundColor: '#000000',
+    width: 216,
+    height: 160,
+    minHeight: 160,
+    minWidth: 216,
+    maxWidth: 216,
+    maxHeight: 160,
+    backgroundColor: '#00000000',
     autoHideMenuBar: true,
+    roundedCorners: true,
     frame: false,
-    alwaysOnTop: true,
-    transparent: false,
+    alwaysOnTop: false,
+    focusable: false,
+    transparent: true,
+    hasShadow: false,
     resizable: true,
     skipTaskbar: true,
     ...(process.platform === 'linux' ? { icon } : {}),
@@ -107,9 +109,9 @@ function createWindow(): BrowserWindow {
     }
   })
 
-  // if (is.dev) {
-  //   mainWindow.webContents.openDevTools({ mode: 'detach' });
-  // }
+  mainWindow.setAlwaysOnTop(true, 'screen-saver');
+  mainWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+  mainWindow.setAlwaysOnTop(false);
 
   mainWindow.on('ready-to-show', () => {
     mainWindow?.show()
@@ -124,15 +126,12 @@ function createWindow(): BrowserWindow {
     console.log('✅ Renderer loaded successfully')
   })
   
-  mainWindow.webContents.on('did-fail-load', (event, code, desc) => {
+  mainWindow.webContents.on('did-fail-load', (_event, code, desc) => {
     console.error('❌ Renderer failed to load:', code, desc)
   })
 
-  // HMR for renderer base on electron-vite cli.
-  // Load the remote URL for development or the local html file for production.
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+  if (process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL'])
-    // mainWindow.webContents.openDevTools()
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
@@ -177,4 +176,10 @@ ipcMain.handle('logout', () => {
   if (mainWindow) {
     mainWindow.webContents.send('logged-out');
   }
+});
+
+ipcMain.on('open-github-auth', () => {
+  shell.openExternal(
+    'https://github.com/login/oauth/authorize?client_id=Ov23liqbrmV9VGJ7Y5AQ&redirect_uri=gitWidget://auth&scope=read:user'
+  );
 });
