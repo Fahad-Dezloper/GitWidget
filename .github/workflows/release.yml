@@ -41,11 +41,3 @@ jobs:
           npm run build
           npm run build:mac
         if: matrix.os == 'macos-latest'
-
-      - name: Build and release (Linux)
-        env:
-          GH_TOKEN: ${{ secrets.SIGN_TOKEN }}
-        run: |
-          npm run build
-          npm run build:linux
-        if: matrix.os == 'ubuntu-latest' 
