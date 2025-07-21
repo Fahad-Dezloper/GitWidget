@@ -69,7 +69,25 @@ Create a `.env` file in the root directory. See [`example.env`](./example.env) f
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to open an issue or submit a pull request.
+We welcome contributions, issues, and feature requests!
+
+### How to contribute
+
+- **Make your changes on a new branch based on `staging`.**  
+  Please do **not** use `main` as your base branch. Always branch off from `staging` and open your pull requests against `staging`.
+
+- **Issue naming convention:**  
+  When opening issues, please use a prefix to indicate the type, for example:  
+  - `fix:[issue title]` for bug fixes  
+  - `feat:[feature title]` for new features  
+  - `chore:[chore title]` for maintenance tasks
+
+- **Pull Requests:**  
+  - Clearly describe your changes and reference any related issues.
+  - Make sure your code is linted and tested before submitting.
+
+- **General:**  
+  - If you are unsure or want to discuss a feature/bug, feel free to open an issue first.
 
 ---
 
