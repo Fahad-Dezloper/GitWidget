@@ -9,8 +9,14 @@ files:
   - '!{.eslintcache,eslint.config.mjs,.prettierignore,.prettierrc.yaml,dev-app-update.yml,CHANGELOG.md,README.md}'
   - '!{.env,.env.*,.npmrc,pnpm-lock.yaml}'
   - '!{tsconfig.json,tsconfig.node.json,tsconfig.web.json}'
+  - '!try.txt'
+  - '!**/{test,__tests__,spec,specs}/**'
+  - '!**/node_modules/.cache/**'
+  - '!**/node_modules/*/{README,readme,CHANGELOG,changelog,LICENSE,license}*'
+  - '!**/{.DS_Store,.git,.gitignore,.gitkeep}'
 asarUnpack:
   - resources/**
+compression: maximum
 win:
   executableName: gitwidget
 nsis:
@@ -18,6 +24,8 @@ nsis:
   shortcutName: ${productName}
   uninstallDisplayName: ${productName}
   createDesktopShortcut: always
+  oneClick: false
+  allowToChangeInstallationDirectory: true
 mac:
   entitlementsInherit: build/entitlements.mac.plist
   extendInfo:

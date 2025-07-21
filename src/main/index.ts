@@ -107,7 +107,7 @@ if (process.platform === 'win32') {
 }
 
 async function exchangeCodeForToken(code: string): Promise<string> {
-  const res = await fetch('http://localhost:4000/api/github/exchange', {
+  const res = await fetch('https://gitwidget-auth.onrender.com/api/github/exchange', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ code }),
@@ -126,7 +126,6 @@ if (!gotTheLock) {
   app.quit();
 } else {
   app.on('second-instance', (_event, argv) => {
-    // This happens on Windows when gitWidget://auth?code=XYZ is triggered
     if (process.platform === 'win32') {
       const deeplink = argv.find(arg => arg.toLowerCase().startsWith('gitwidget://'));
       if (deeplink) {
