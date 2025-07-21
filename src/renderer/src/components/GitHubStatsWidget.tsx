@@ -210,7 +210,7 @@ function GitHubStatsWidget({
           <button
             onClick={onLogout}
             className="logout-button"
-            title="Logout"
+            // title="Logout"
           >
             <LogoutIcon size={16} />
           </button>
