@@ -563,3 +563,28 @@ code {
   animation: slideDown 0.3s ease-out;
   -webkit-app-region: no-drag;
 }
+
+/* Logout icon animations */
+.logout-arrow {
+  transition: transform 0.3s ease;
+}
+
+.logout-animate .logout-arrow {
+  transform: translateX(2px);
+  animation: logoutArrowMove 0.4s ease;
+}
+
+@keyframes logoutArrowMove {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-3px); }
+}
+
+/* Settings gear animations */
+.settings-animate {
+  animation: settingsRotate 0.5s ease;
+}
+
+@keyframes settingsRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(180deg); }
+}
