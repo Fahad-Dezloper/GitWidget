@@ -265,33 +265,56 @@ code {
   background-color: #39d353 !important;
 }
 
-.lang-tooltip {
+.language-bar-cont {
   display: flex;
-  white-space: nowrap;
-  font-size: 10px;
-}
-er {
-  display: flex;
-  gap: 14px;
   align-items: center;
-  border-radius: 12px;
-  background: transparent;
 }
 
 .language-bar-container {
   display: flex;
   width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.language-bars {
+  display: flex;
   gap: 12px;
+  flex: 1;
+}
+
+.logout-button {
+  background: none;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  margin-top: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  margin-left: 2px;
+  -webkit-app-region: no-drag;
+}
+
+.logout-button:hover {
+  background-color: transparent;
 }
 
 .language-bar {
   border-radius: 9999px;
   cursor: pointer;
-  min-width: 20vh;
-  max-width: 20vh;
+  min-width: 16vh;
+  max-width: 16vh;
   height: 10px;
-  position: absolute;
-  cursor: pointer;
+  position: relative;
+  transition: opacity 0.2s ease;
+}
+
+.language-bar:hover {
+  opacity: 0.8;
 }
 
 ::-webkit-scrollbar {
@@ -306,26 +329,7 @@ er {
   min-width: 300px;
 }
 
-.logout-btn-hover{
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-  z-index: 10;
-  position: absolute;
-  top: 10px;
-  left: 50px;
-  background: none;
-  border: none;
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  -webkit-app-region: no-drag;
-  padding: 0 6px;
-}
-.github-widget-container:hover .logout-btn-hover {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-}
+
 
 .signin-btn {
   width: 100%;
@@ -356,7 +360,7 @@ er {
 .github-widget-container {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 7px;
   max-width: 100%;
   min-width: 200px;
   transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
@@ -445,4 +449,117 @@ er {
 .settings-menu-logout:hover {
   background: #333;
   color: #fff;
+}
+
+/* Auto-updater notification styles */
+.update-notification {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #23272f;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #444;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  max-width: 200px;
+  text-align: center;
+  font-size: 12px;
+  animation: slideDown 0.3s ease-out;
+  -webkit-app-region: no-drag;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.update-notification p {
+  margin: 0 0 8px 0;
+  font-weight: 500;
+}
+
+.update-notification button {
+  background: #0969da;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  -webkit-app-region: no-drag;
+}
+
+.update-notification button:hover {
+  background: #0860ca;
+}
+
+.update-notification.error {
+  background: #da1e37;
+  border-color: #c41e3a;
+}
+
+.update-notification.error button {
+  background: #fff;
+  color: #da1e37;
+}
+
+.update-notification.error button:hover {
+  background: #f0f0f0;
+}
+
+.update-notification.ready {
+  background: #28a745;
+  border-color: #20c997;
+}
+
+.update-notification.downloading {
+  background: #17a2b8;
+  border-color: #138496;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #fff;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Authentication success notification */
+.auth-success-notification {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #28a745;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #20c997;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  z-index: 1000;
+  max-width: 200px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  animation: slideDown 0.3s ease-out;
+  -webkit-app-region: no-drag;
 }

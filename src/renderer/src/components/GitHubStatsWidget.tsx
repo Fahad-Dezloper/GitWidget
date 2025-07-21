@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState, type JSX } from 'react'
 import ContributionGrid from './ContributionGrid'
+import { LogoutIcon } from './LogoutComponent'
 import colorsData from '../../../../colors.json'
 import { useRef } from 'react'
 
 const CACHE_KEY = 'github-stats-cache'
-const CACHE_DURATION = 5 * 60 * 60 * 1000 // 5 hours in milliseconds
+const CACHE_DURATION = 2 * 60 * 60 * 1000 // 2 hours in milliseconds
 
 interface ContributionDay {
   color: string
@@ -178,73 +179,41 @@ function GitHubStatsWidget({
     })
   }
 
-  // Calculate widget width (e.g. 16px per week + padding)
-  const weekCount = filteredWeeks ? filteredWeeks.length : 0
-  const widgetWidth = 16 * weekCount + 32 // 16px per week, 32px padding
+  // const weekCount = filteredWeeks ? filteredWeeks.length : 0
+  // const widgetWidth = 16 * weekCount + 32
 
   return (
-    <div className={'hover-container github-widget-container'} style={{ width: widgetWidth }}>
-      {/* <div className="settings-menu-wrapper">
-        <button
-          onClick={() => setMenuOpen(v => !v)}
-          className="settings-gear-btn logout-btn-hover"
-          onMouseEnter={() => setMenuOpen(true)}
-        >
-          <SettingsGearIcon size={22} />
-        </button>
-        {menuOpen && (
-          <div
-            ref={menuRef}
-            className="settings-menu"
-            onMouseLeave={() => setMenuOpen(false)}
-          >
-            <div className="settings-menu-tabs">
-              {DURATION_OPTIONS.map(opt => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setDuration(opt.value)
-                    setMenuOpen(false)
-                  }}
-                  className={
-                    'settings-menu-tab' + (duration === opt.value ? ' selected' : '')
-                  }
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-            <hr className="settings-menu-divider" />
-            <button
-              onClick={onLogout}
-              className="settings-menu-logout"
-            >
-              Logout
-            </button>
-          </div>
-        )}
-      </div> */}
+    <div className={'hover-container github-widget-container'} >
       {filteredWeeks && <ContributionGrid weeks={filteredWeeks} />}
       {topLanguages.length > 0 && (
         <div className="language-bar-container">
-          {/* @ts-ignore: i know motherfucker */}
-          {topLanguages.map(([lang, count]) => {
-            return (
-              <div key={lang} className="language-bar-cont" style={{ position: 'relative' }}>
-                <div
-                  className="language-bar"
-                  style={{
-                    backgroundColor: getLangColor(lang),
-                    position: 'relative'
-                  }}
-                ></div>
-                {/* show name and percentage on hover */}
-                {/* <div className="lang-tooltip">
-                    {lang}: {percentage}%
-                  </div> */}
-              </div>
-            )
-          })}
+          <div className="language-bars">
+            {/* @ts-ignore: i know motherfucker */}
+            {topLanguages.map(([lang, count]) => {
+              const percentage = ((count / totalLangCount) * 100).toFixed(1)
+              // Calculate width based on percentage, with min/max constraints
+              const width = Math.max(40, Math.min(80, (parseFloat(percentage) / 100) * 200))
+              return (
+                <div key={lang} className="language-bar-cont">
+                  <div
+                    className="language-bar"
+                    style={{
+                      backgroundColor: getLangColor(lang),
+                      width: `${width}px`
+                    }}
+                    title={`${lang}: ${percentage}%`}
+                  ></div>
+                </div>
+              )
+            })}
+          </div>
+          <button
+            onClick={onLogout}
+            className="logout-button"
+            title="Logout"
+          >
+            <LogoutIcon size={16} />
+          </button>
         </div>
       )}
     </div>
