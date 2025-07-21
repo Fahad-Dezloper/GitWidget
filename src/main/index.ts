@@ -199,7 +199,6 @@ function createWindow(): BrowserWindow {
 app.whenReady().then(async () => {
   console.log("app ready here")
 
-  // Suppress common Electron development warnings
   if (process.env.NODE_ENV === 'development') {
     const originalConsoleError = console.error;
     console.error = (...args) => {
@@ -210,7 +209,7 @@ app.whenReady().then(async () => {
         message.includes('Unable to create cache') ||
         message.includes('Gpu Cache Creation failed')
       ) {
-        return; // Suppress these development warnings
+        return;
       }
       originalConsoleError.apply(console, args);
     };
@@ -218,9 +217,7 @@ app.whenReady().then(async () => {
 
   mainWindow = createWindow()
 
-  // Initialize auto-updater after window is created
   if (!process.env['ELECTRON_RENDERER_URL']) {
-    // Only check for updates in production
     autoUpdater.checkForUpdatesAndNotify();
   }
 
