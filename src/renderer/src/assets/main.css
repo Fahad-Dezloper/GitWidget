@@ -317,6 +317,59 @@ code {
   opacity: 0.8;
 }
 
+.language-tooltip {
+  position: absolute;
+  top: -35px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(32, 34, 40, 0.95);
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  animation: tooltipFadeIn 0.2s ease;
+  pointer-events: none;
+  z-index: 10;
+}
+
+@keyframes tooltipFadeIn {
+  from { 
+    opacity: 0;
+    transform: translateX(-50%) translateY(5px);
+  }
+  to { 
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.language-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid rgba(32, 34, 40, 0.95);
+}
+
+.language-name {
+  font-weight: 600;
+}
+
+.language-percentage {
+  color: #8b949e;
+}
+
 ::-webkit-scrollbar {
   display: none;
 }

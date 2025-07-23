@@ -46,6 +46,7 @@ function GitHubStatsWidget({
   const [duration] = useState<number>(3)
   const [menuOpen, setMenuOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
+  const [hoveredLang, setHoveredLang] = useState<string | null>(null)
 
   // Close menu on outside click
   useEffect(() => {
@@ -152,7 +153,7 @@ function GitHubStatsWidget({
     fetchStats()
   }, [token])
 
-  if (loading) return <div>Loading GitHub stats...</div>
+  if (loading) return <div>Loading GitHub stats... (with hover fix)</div>
   if (error) return <div>{error}</div>
 
   // @ts-ignore: intentional
@@ -201,8 +202,17 @@ function GitHubStatsWidget({
                       backgroundColor: getLangColor(lang),
                       width: `${width}px`
                     }}
+                    onMouseEnter={() => setHoveredLang(lang)}
+                    onMouseLeave={() => setHoveredLang(null)}
                     title={`${lang}: ${percentage}%`}
-                  ></div>
+                  >
+                    {hoveredLang === lang && (
+                      <div className="language-tooltip">
+                        <span className="language-name">{lang}</span>
+                        <span className="language-percentage">{percentage}%</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )
             })}
