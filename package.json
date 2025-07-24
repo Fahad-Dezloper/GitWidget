@@ -1,6 +1,6 @@
 {
   "name": "gitwidget",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "GitHub Widget for windows",
   "main": "./out/main/index.js",
   "author": "https://github.com/Fahad-Dezloper",

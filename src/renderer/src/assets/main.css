@@ -277,12 +277,6 @@ code {
   align-items: center;
 }
 
-.language-bars {
-  display: flex;
-  gap: 12px;
-  flex: 1;
-}
-
 .logout-button {
   background: none;
   color: #fff;
@@ -300,21 +294,29 @@ code {
 }
 
 .logout-button:hover {
-  background-color: transparent;
+  background-color: transparent; 
 }
 
-.language-bar {
-  border-radius: 9999px;
+.barr{
+  background: none;
+  color: #fff;
+  border: none;
   cursor: pointer;
-  min-width: 16vh;
-  max-width: 16vh;
-  height: 10px;
-  position: relative;
-  transition: opacity 0.2s ease;
+  padding: 4px;
+  width: 13vw;
+  background-color: yellow;
+  height: 12px;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+  margin-left: 2px;
+  -webkit-app-region: no-drag;
 }
 
-.language-bar:hover {
-  opacity: 0.8;
+.barr:hover {
+  opacity: 0.8; 
 }
 
 ::-webkit-scrollbar {
