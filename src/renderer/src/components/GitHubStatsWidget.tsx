@@ -187,25 +187,20 @@ function GitHubStatsWidget({
       {filteredWeeks && <ContributionGrid weeks={filteredWeeks} />}
       {topLanguages.length > 0 && (
         <div className="language-bar-container">
-          <div className="language-bars">
-            {/* @ts-ignore: i know motherfucker */}
-            {topLanguages.map(([lang, count]) => {
+          <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+            {topLanguages.map(([item, count]) => {
               const percentage = ((count / totalLangCount) * 100).toFixed(1)
-              // Calculate width based on percentage, with min/max constraints
-              const width = Math.max(40, Math.min(80, (parseFloat(percentage) / 100) * 200))
+              // const width = Math.max(40, Math.min(80, (parseFloat(percentage) / 100) * 200))
               return (
-                <div key={lang} className="language-bar-cont">
-                  <div
-                    className="language-bar"
-                    style={{
-                      backgroundColor: getLangColor(lang),
-                      width: `${width}px`
-                    }}
-                    title={`${lang}: ${percentage}%`}
-                  ></div>
-                </div>
-              )
-            })}
+            <button
+            key={item}
+            onClick={onLogout}
+            className="barr"
+            style={{backgroundColor: getLangColor(item),}}
+            title={`${item}: ${percentage}%`}
+          >
+              </button>
+          )})}
           </div>
           <button
             onClick={onLogout}
@@ -221,3 +216,21 @@ function GitHubStatsWidget({
 }
 
 export default GitHubStatsWidget
+
+// {topLanguages.map(([lang, count]) => {
+//   const percentage = ((count / totalLangCount) * 100).toFixed(1)
+//   // Calculate width based on percentage, with min/max constraints
+//   const width = Math.max(40, Math.min(80, (parseFloat(percentage) / 100) * 200))
+//   return (
+//     <div key={lang} className="language-bar-cont">
+//       <div
+//         className="language-bar"
+//         style={{
+//           backgroundColor: getLangColor(lang),
+//           width: `${width}px`
+//         }}
+//         title={`${lang}: ${percentage}%`}
+//       ></div>
+//     </div>
+//   )
+// })}
